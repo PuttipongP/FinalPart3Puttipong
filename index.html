@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!--link leaflet-->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin="" />
+        <!-- W3 CSS template -->
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin="">
+        </script>
+    <style>
+        #mapid{
+            height: 600px;
+        }
+    </style>   
+<title>India Travel Guide</title>
+<h><b style="color:black;">----- 5 Must Travel Location in India-----<b></h>
+  <p style="color:blue;"><strong><em>--------Created By Puttipong Promkhun 62103010020 For Final Test GE344--------</em></strong></p>
+    </head>
+    <body style="background : url(india.jpg);  background-position: center;
+      background-repeat: no-repeat; background-size: cover;"> </body>
+        <div class="w3-row">
+            <div id="mapid" class="w3-half"></div>
+         <div id="content" class="w3-half">
+                <table class="w3-table w3-striped">
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Rate (5) ⭐</th>
+                    </tr>
+                    <tr>
+                        <td>Name</td>
+                        <td>Type</td>
+                        <td>Rate⭐</td>
+                    </tr>
+                </table>
+            </div>
+        </div>   
+
+     <!-- เรียกแผนที่ -->
+<script>
+// เรียกแผนที่
+var map = L.map("mapid").setView([23.022870688483906, 80.66611536061698],5);
+// base map1
+var osm = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png")
+.addTo(map);
+// based map2
+var Esrisat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}')
+.addTo(map);
+// group layers OSM+World
+var baseMaps ={
+    //layername:Variables
+    OSM:osm,
+    Esri_WorldImagery:Esrisat, 
+};
+// add data
+var tourpoint = {
+type: "FeatureCollection",
+name: "tour_plk",
+crs: {
+type: "name",
+properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+},
+features: [
+{
+type: "Feature",
+properties: {
+Name: "Taj Mahal",
+Type: "Historical",
+FID_1: 1358.0,
+level: "⭐⭐⭐⭐⭐",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[78.04973323131648,27.183418983750474]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "Lotus Temple",
+Type: "Religion/Architecture",
+FID_1: 1357.0,
+level: "⭐⭐⭐⭐",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[77.25963096639718,28.553774794891833]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "Jodhpur",
+Type: "Culture",
+FID_1: 1362.0,
+level: "⭐⭐⭐⭐",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[73.0195408018791,26.23985091369434]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "Varanasi",
+Type: "Culture",
+FID_1: 1364.0,
+level: "⭐⭐⭐⭐",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[82.97874664360708,25.317631413169003]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "Mumbai",
+Type: "Culture",
+FID_1: 1355.0,
+level: "⭐⭐⭐⭐⭐",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[ 72.87706624529014,19.084094882438023]],
+},
+},
+],
+};
+
+//add marker and popup
+
+var tourLayer = L.geoJSON(tourpoint, {
+pointToLayer: function (feature, latlng) {
+return L.marker(latlng).bindPopup(feature.properties.Name);
+},
+onEachFeature: function (feature, layer) {
+layer.on("mouseover", function () {
+document
+.getElementById(feature.properties.FID_1)
+.classList.add("w3-red");
+});
+
+
+
+layer.on("mouseout", function () {
+document
+.getElementById(feature.properties.FID_1)
+.classList.remove("w3-red");
+});
+},
+}).addTo(map);
+///link table with popup and marker
+var cont = "";
+cont += "<table class='w3-table w3-striped'>";
+cont += "<tr>";
+cont += "<th>Location name</th>";
+cont += "<th>Type</th>";
+cont += "<th>Rating</th>";
+cont += "</tr>";
+for (let i in tourpoint.features) {
+cont += "<tr id=" + tourpoint.features[i].properties.FID_1 + ">";
+cont += "<td>" + tourpoint.features[i].properties.Name + "</td>";
+cont += "<td>" + tourpoint.features[i].properties.Type + "</td>";
+cont += "<td>" + tourpoint.features[i].properties.level + "</td>";
+cont += "</tr>";
+}
+cont += "</table>";
+console.log(cont);
+document.getElementById("content").innerHTML = cont;
+
+
+//group point layer กำหนด overlay
+var overlay = {
+    Travel_Guide:tourLayer,
+};
+
+
+//Create layer control 
+L.control.layers(baseMaps,overlay).addTo(map);
+
+
+</script>
+
+
+    </body>
+</html>
